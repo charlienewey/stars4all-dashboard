@@ -1,0 +1,1366 @@
+---
+title: "S4A"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE}
+
+library(ggplot2)
+library(data.table)
+library(ggmap)
+library(mapproj)
+library(rworldmap)
+library(ggmap)
+library(Imap)
+library(sqldf)
+library(igraph)
+library(plyr)
+library(dplyr)
+library(googleVis)
+library(ineq)
+library(reldist)
+
+```
+
+
+## Motion plot SA4
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+s4aProjects <- read.csv("s4aProjects_MonthsMT1.csv")
+
+s4aProjects$Month <- as.Date(s4aProjects$Month)
+
+s4aMotion=gvisMotionChart(s4aProjects, 
+                             idvar = "Project", 
+                             timevar = "Month",
+                             date.format = "%a %b %d",
+                             xvar = "Contribution_to_Science",
+                             yvar = "Public_Engagement",
+                             colorvar = "Classification",
+                             sizevar = "Classification",
+                             options = list(width = 1000, height = 610)
+                        )
+s4aMotion$html$footer <- NULL
+s4aMotion$html$jsFooter <- NULL
+s4aMotion$html$caption <- NULL
+
+plot(s4aMotion)
+
+cat(s4aMotion$html$chart, file = "s4a.html")
+
+```
+
+
+
+## Dark Skies, Public Engagement: Project Appeal 
+```{r}
+
+###################################################################
+                  ###   Dark Skies  ###
+###################################################################
+
+darkskiesAll <- read.csv("darkskies/darkskies_task_run.csv")
+attach(darkskiesAll)
+summary(darkskiesAll)
+
+datetxt <- as.Date(darkskiesAll$task_run__created)
+convertDataDate <- data.frame(date = datetxt,
+                 year = as.numeric(format(datetxt, format = "%Y")),
+                 month = as.numeric(format(datetxt, format = "%m")),
+                 day = as.numeric(format(datetxt, format = "%d")))
+convertDataDate
+
+convertDataDateYear2015 <- sqldf("SELECT * FROM convertDataDate WHERE year = 2015")
+convertDataDateYear2015
+
+
+convertDataDateYear2016 <- sqldf("SELECT * FROM convertDataDate WHERE year = 2016")
+convertDataDateYear2016
+
+count_rows_year2015 <- count(convertDataDateYear2015$year)
+count_rows_year2015
+
+#Counting rows 2016
+count_rows_year2016 <- count(convertDataDateYear2016$year)
+count_rows_year2016
+
+########### Public Engagement: Project Appeal 2014 #################
+
+darkskies2014 <- read.csv("2014/darkskies/darkskies_task_run_2014.csv")
+attach(darkskies2014)
+summary(darkskies2014)
+
+ds_users_2014 <- darkskies2014$task_run__user_id
+ds_users_2014Total <- nlevels(ds_users_2014)
+ds_users_2014Total
+
+ds_created_2014 <- "2014-04-27T10:14:56.967737"
+ds_finished_2014 <-"2014-12-31T23:23:54.639506"
+
+ds_days_2014 <- difftime(ds_finished_2014, ds_created_2014, units = "weeks")
+ds_days_2014
+ds_daysi_2014 <- as.integer(ds_days_2014)
+ds_daysi_2014
+ds_2014_projectPeriod <- ds_daysi_2014 ^2
+ds_2014_projectPeriod
+
+ds_2014_total <- round(ds_users_2014Total / ds_2014_projectPeriod, digits = 3)
+ds_2014_total
+ds_2014_projectAppealTotal <- ds_2014_total * 100
+ds_projectAppeal_2014 <- round(ds_2014_projectAppealTotal, digits = 2)
+ds_projectAppeal_2014
+
+  ########### Public Engagement: Project Appeal 2015 ################
+
+darkskies2015 <- read.csv("2015/darkskies/darkskies_task_run_2015.csv")
+attach(darkskies2015)
+summary(darkskies2015)
+
+ds_users_2015 <- darkskies2015$task_run__user_id
+ds_users_2015Total <- nlevels(ds_users_2015)
+ds_users_2015Total
+ds_users_2015_df_extraction <- 154114
+ds_users_2015_df_extraction
+
+ds_created_2015 <- "2015-01-01T00:10:59.319297"
+#ds_finished_2015 <- "2015-04-07T20:13:42.313438"
+ds_finished_2015 <- "2015-12-30T20:13:42.313438"
+ds_days_2015 <- difftime(ds_finished_2015, ds_created_2015)
+ds_days_2015
+ds_daysi_2015 <- as.integer(ds_days_2015)
+ds_daysi_2015
+ds_2015_projectPeriod <- ds_daysi_2015 ^2
+ds_2015_projectPeriod
+
+ds_2015_total <- round(ds_users_2015_df_extraction / ds_2015_projectPeriod, digits = 3)
+ds_2015_total
+ds_2015_projectAppealTotal <- ds_2015_total * 100
+ds_projectAppeal_2015 <- round(ds_2015_projectAppealTotal, digits = 2)
+ds_projectAppeal_2015
+
+########### Public Engagement: Project Appeal 2016 ################
+
+ds_users_2016_df_extraction <- 111321
+ds_users_2016_df_extraction
+
+ds_created_2016 <- "2016-01-01T00:10:59.319297"
+ds_finished_2016 <- "2016-12-04T20:13:42.313438"
+ds_days_2016 <- difftime(ds_finished_2016, ds_created_2016)
+ds_days_2016
+ds_daysi_2016 <- as.integer(ds_days_2016)
+ds_daysi_2016
+ds_2016_projectPeriod <- ds_daysi_2016 ^2
+ds_2016_projectPeriod
+
+
+ds_2016_total <- round(ds_users_2016_df_extraction / ds_2016_projectPeriod, digits = 3)
+ds_2016_total
+ds_2016_projectAppealTotal <- ds_2016_total * 100
+ds_projectAppeal_2016 <- round(ds_2016_projectAppealTotal, digits = 2)
+ds_projectAppeal_2016
+
+```
+
+
+
+## Night Cities, Public Engagement: Project Appeal
+
+```{r}
+
+###################################################################
+                  ###   Night Cities   ###
+###################################################################
+
+########### Public Engagement: Project Appeal 2014 #################
+
+nightcities2014 <- read.csv("2014/nightcities/nightcitiesiss_task_run_2014.csv")
+attach(nightcities2014)
+summary(nightcities2014)
+
+nc_users_2014 <- nightcities2014$task_run__user_id
+nc_users_2014Total <- nlevels(nc_users_2014)
+nc_users_2014Total
+
+nc_created_2014 <- "2014-07-08T09:03:11.797648"
+nc_finished_2014 <-"2014-12-31T18:49:17.485895"
+
+nc_days_2014 <- difftime(nc_finished_2014, nc_created_2014)
+nc_days_2014
+nc_daysi_2014 <- as.integer(nc_days_2014)
+nc_daysi_2014
+nc_2014_projectPeriod <- nc_daysi_2014 ^2
+nc_2014_projectPeriod
+
+nc_2014_total <- round(nc_users_2014Total / nc_2014_projectPeriod, digits = 3)
+nc_2014_total
+nc_2014_projectAppealTotal <- nc_2014_total * 100
+nc_projectAppeal_2014 <- round(nc_2014_projectAppealTotal, digits = 2)
+nc_projectAppeal_2014
+
+
+########### Public Engagement: Project Appeal 2015 ################
+
+nightcities2015 <- read.csv("2015/nightcities/nightcitiesiss_task_run_2015.csv")
+attach(nightcities2015)
+summary(nightcities2015)
+
+nc_users_2015 <- nightcities2015$task_run__user_id
+nc_users_2015Total <- nlevels(nc_users_2015)
+nc_users_2015Total
+
+nc_created_2015 <- "2015-01-01T13:13:32.166716"
+nc_finished_2015 <- "2015-12-31T12:25:51.060094"
+nc_days_2015 <- difftime(nc_finished_2015, nc_created_2015)
+nc_days_2015
+nc_daysi_2015 <- as.integer(nc_days_2015)
+nc_daysi_2015
+nc_2015_projectPeriod <- nc_daysi_2015 ^2
+nc_2015_projectPeriod
+
+nc_2015_total <- round(nc_users_2015Total / nc_2015_projectPeriod, digits = 3)
+nc_2015_total
+nc_2015_projectAppealTotal <- nc_2015_total * 100
+nc_projectAppeal_2015 <- round(nc_2015_projectAppealTotal, digits = 2)
+nc_projectAppeal_2015
+
+########### Public Engagement: Project Appeal 2016 ################
+
+nightcities2016 <- read.csv("2016/nightcities/nightcitiesiss_task_run_2016.csv")
+attach(nightcities2016)
+summary(nightcities2016)
+
+nc_users_2016 <- nightcities2016$task_run__user_id
+nc_users_2016Total <- nlevels(nc_users_2016)
+nc_users_2016Total
+
+nc_created_2016 <- "2016-01-01T00:55:18.787305"
+nc_finished_2016 <- "2016-09-13T09:06:55.030701"
+nc_days_2016 <- difftime(nc_finished_2016, nc_created_2016)
+nc_days_2016
+nc_daysi_2016 <- as.integer(nc_days_2016)
+nc_daysi_2016
+nc_2016_projectPeriod <- nc_daysi_2016 ^2
+nc_2016_projectPeriod
+
+nc_2016_total <- nc_users_2016Total / nc_2016_projectPeriod
+nc_2016_total
+nc_2016_projectAppealTotal <- nc_2016_total * 100
+nc_projectAppeal_2016 <- round(nc_2016_projectAppealTotal, digits = 2)
+nc_projectAppeal_2016
+
+```
+
+## Lost At Night, Public Engagement: Project Appeal
+```{r}
+
+###################################################################
+                  ###   Lost at night   ###
+###################################################################
+
+########### Public Engagement: Project Appeal 2014 #################
+
+lostAtNight2014 <- read.csv("2014/lostatnight/LostAtNight_task_run_2014.csv")
+attach(lostAtNight2014)
+summary(lostAtNight2014)
+
+ln_users_2014 <- lostAtNight2014$task_run__user_id
+ln_users_2014Total <- nlevels(ln_users_2014)
+ln_users_2014Total
+
+ln_created_2014 <- "2014-07-08T16:40:45.518713"
+ln_finished_2014 <-"2014-12-31T22:42:53.435242"
+
+ln_days_2014 <- difftime(ln_finished_2014, ln_created_2014)
+ln_days_2014
+ln_daysi_2014 <- as.integer(ln_days_2014)
+ln_daysi_2014
+ln_2014_projectPeriod <- ln_daysi_2014 ^2
+ln_2014_projectPeriod
+
+ln_2014_total <- round(ln_users_2014Total / ln_2014_projectPeriod, digits = 3)
+ln_2014_total
+ln_2014_projectAppealTotal <- ln_2014_total * 100
+ln_projectAppeal_2014 <- round(ln_2014_projectAppealTotal, digits = 2)
+ln_projectAppeal_2014
+
+########### Public Engagement: Project Appeal 2015 ################
+
+lostAtNight2015 <- read.csv("2015/lostatnight/LostAtNight_task_run_2015.csv")
+attach(lostAtNight2015)
+summary(lostAtNight2015)
+
+ln_users_2015 <- lostAtNight2015$task_run__user_id
+ln_users_2015Total <- nlevels(ln_users_2015)
+ln_users_2015Total
+
+ln_created_2015 <- "2015-01-01T00:13:53.498091"
+ln_finished_2015 <- "2015-12-31T16:12:34.492702"
+ln_days_2015 <- difftime(ln_finished_2015, ln_created_2015)
+ln_days_2015
+ln_daysi_2015 <- as.integer(ln_days_2015)
+ln_daysi_2015
+ln_2015_projectPeriod <- ln_daysi_2015 ^2
+ln_2015_projectPeriod
+
+ln_2015_total <- round(ln_users_2015Total / ln_2015_projectPeriod, digits = 3)
+ln_2015_total
+ln_2015_projectAppealTotal <- ln_2015_total * 100
+ln_projectAppeal_2015 <- round(ln_2015_projectAppealTotal, digits = 2)
+ln_projectAppeal_2015
+
+########### Public Engagement: Project Appeal 2016 ################
+
+lostAtNight2016 <- read.csv("2016/lostatnight/LostAtNight_task_run_2016.csv")
+attach(lostAtNight2016)
+summary(lostAtNight2016)
+
+ln_users_2016 <- lostAtNight2016$task_run__user_id
+ln_users_2016Total <- nlevels(ln_users_2016)
+ln_users_2016Total
+
+ln_created_2016 <- "2016-01-04T01:18:27.316607"
+ln_finished_2016 <- "2016-11-28T23:40:47.413624"
+ln_days_2016 <- difftime(ln_finished_2016, ln_created_2016)
+ln_days_2016
+ln_daysi_2016 <- as.integer(ln_days_2016)
+ln_daysi_2016
+ln_2016_projectPeriod <- ln_daysi_2016 ^2
+ln_2016_projectPeriod
+
+ln_2016_total <- ln_users_2016Total / ln_2016_projectPeriod
+ln_2016_total
+ln_2016_projectAppealTotal <- ln_2016_total * 100
+ln_projectAppeal_2016 <- round(ln_2016_projectAppealTotal, digits = 2)
+ln_projectAppeal_2016
+
+
+```
+
+
+## Public Appeal Graph
+```{r}
+
+########### Public Engagement: Project Appeal 2014 #################
+
+projectAppealBar2014 <- data.frame(
+  project_name = factor(c("Dark skies","Night Cities", "Lost at Night"),
+                levels=c("Dark skies","Night Cities", "Lost at Night")),
+  projectAppeal = c(ds_2014_total, nc_2014_total, ln_2014_total)
+            )
+projectAppealBar2014
+
+# Map the project name to different fill colors
+projectAppealGB2014 <- ggplot(data=projectAppealBar2014, 
+            aes(x=project_name, y=projectAppeal, fill=project_name)) +
+            geom_bar(stat="identity") +  coord_flip() + 
+            geom_text(aes(label=projectAppeal), hjust = 1, vjust=1,
+                                    colour="black") +
+           xlab("Public Engagement") + ylab("Frequency") +
+                          ggtitle(" Project Appeal 2014")
+
+projectAppealGB2014
+
+########### Public Engagement: Project Appeal 2015 #################
+
+projectAppealBar2015 <- data.frame(
+  project_name = factor(c("Dark skies","Night Cities", "Lost at Night"),
+                levels=c("Dark skies","Night Cities", "Lost at Night")),
+  projectAppeal = c(ds_2015_total, nc_2015_total, ln_2015_total)
+            )
+projectAppealBar2015
+
+# Map the project name to different fill colors
+projectAppealGB2015 <- ggplot(data=projectAppealBar2015, 
+            aes(x=project_name, y=projectAppeal, fill=project_name)) +
+            geom_bar(stat="identity") +  coord_flip() + 
+            geom_text(aes(label=projectAppeal), hjust = 1, vjust=1,
+                                    colour="black") +
+           xlab("Public Engagement") + ylab("Frequency") +
+                          ggtitle(" Project Appeal 2015")
+
+projectAppealGB2015
+
+########### Public Engagement: Project Appeal 2016 #################
+
+# No data related to "Dark skies" in the csv file. This data should be retrieved from the API
+
+```
+
+
+
+## Sustained Engagement: Dark Skies
+```{r}
+
+###################################################################
+                  ###   Dark Skies  ###
+###################################################################
+
+ds_created_F <- "2016-01-01T00:10:59.319297"
+ds_finished_F <-"2016-12-04T01:18:27.103462"
+ds_days_2016Fw <- difftime(ds_finished_F, ds_created_F, units = "weeks")
+ds_days_2016Fw
+
+########### Public Engagement: Sustained Engagement 2014 #################
+
+darkskies2014 <- read.csv("2014/darkskies/darkskies_task_run_2014.csv")
+attach(darkskies2014)
+summary(darkskies2014)
+
+ds_se_users_2014 <- darkskies2014$task_run__user_id
+ds_se_users_2014Total <- nlevels(ds_se_users_2014)
+ds_se_users_2014Total
+
+ds_se_created_2014 <- "2014-04-27T10:14:56.967737"
+ds_se_finished_2014 <-"2014-12-31T23:23:54.639506"
+
+ds_se_weeks_2014w <- difftime(ds_se_finished_2014, 
+                              ds_se_created_2014, units = "weeks")
+ds_se_weeks_2014w
+ds_se_weeksi_2014w <- as.integer(ds_se_weeks_2014w)
+ds_se_weeksi_2014w
+
+
+ds_ap_created_2014 <- "2014-04-27T10:14:56.967737"
+ds_ap_finished_2014 <-"2014-12-31T23:23:54.639506"
+
+ds_days_projectPeriod2014 <- difftime(ds_ap_finished_2014,
+                                  ds_ap_created_2014,  units = "weeks")
+ds_days_projectPeriod2014
+ds_days_projectPeriodi2014 <- as.integer(ds_days_projectPeriod2014)
+ds_days_projectPeriodi2014
+
+ds_ap_projectPeriod2014 <- ds_days_projectPeriodi2014 ^2
+ds_ap_projectPeriod2014
+
+ds_ap_total2014 <- round(ds_se_weeksi_2014w / ds_ap_projectPeriod2014, digits = 3)
+ds_ap_total2014
+
+
+  ########### Public Engagement: Sustained Engagement 2015 ################
+
+darkskies2015 <- read.csv("2015/darkskies/darkskies_task_run_2015.csv")
+attach(darkskies2015)
+summary(darkskies2015)
+
+ds_users_2015 <- darkskies2015$task_run__user_id
+ds_users_2015Total <- nlevels(ds_users_2015)
+ds_users_2015Total
+
+ds_created_2015 <- "2015-01-01T00:10:59.319297"
+ds_finished_2015 <-"2015-12-30T20:13:42.313438"
+
+ds_weeks_2015w <- difftime(ds_finished_2015, 
+                           ds_created_2015, units = "weeks")
+ds_weeks_2015w
+ds_weeksi_2015w <- as.integer(ds_weeks_2015w)
+ds_weeksi_2015w
+
+ds_ap_created_2015 <- "2015-01-01T00:10:59.319297"
+ds_ap_finished_2015 <-"2015-12-30T20:13:42.313438"
+
+ds_days_projectPeriod2015 <- difftime(ds_ap_finished_2015,
+                                  ds_ap_created_2015,  units = "weeks")
+ds_days_projectPeriod2015
+ds_days_projectPeriodi2015 <- as.integer(ds_days_projectPeriod2015)
+ds_days_projectPeriodi2015
+
+ds_ap_projectPeriod2015 <- ds_days_projectPeriodi2015 ^2
+ds_ap_projectPeriod2015
+
+ds_ap_total2015 <- round(ds_weeksi_2015w / ds_ap_projectPeriod2015, digits = 3)
+ds_ap_total2015
+
+########### Public Engagement: Sustained Engagement 2016 ################
+
+ds_se_created_2016 <- "2016-01-01T10:14:56.967737"
+ds_se_finished_2016 <-"2016-12-04T23:23:54.639506"
+
+ds_se_weeks_2016w <- difftime(ds_se_finished_2016, 
+                              ds_se_created_2016, units = "weeks")
+ds_se_weeks_2016w
+ds_se_weeksi_2016w <- as.integer(ds_se_weeks_2016w)
+ds_se_weeksi_2016w
+
+ds_ap_created_2016 <- "2016-01-01T10:14:56.967737"
+ds_ap_finished_2016 <-"2016-12-04T23:23:54.639506"
+
+ds_days_projectPeriod2016 <- difftime(ds_ap_finished_2016,
+                                  ds_ap_created_2016,  units = "weeks")
+ds_days_projectPeriod2016
+ds_days_projectPeriodi2016 <- as.integer(ds_days_projectPeriod2016)
+ds_days_projectPeriodi2016
+
+ds_ap_projectPeriod2016 <- ds_days_projectPeriodi2016 ^2
+ds_ap_projectPeriod2016
+
+ds_ap_total2016 <- round(ds_se_weeksi_2016w / ds_ap_projectPeriod2016, digits = 3)
+ds_ap_total2016
+
+
+###### This calculus involves 2014 and 2015 ######
+
+ds_weeksi_sum <- sum(ds_weeksi_2014w, ds_weeksi_2015w)
+ds_weeksi_mT <- median(ds_weeksi_sum)
+ds_weeksi_mT
+
+
+ds_ap_created_2014 <- "2014-04-27T10:14:56.967737"
+ds_ap_finished_2015 <-"2015-04-07T20:13:42.313438"
+
+ds_days_projectPeriod <- difftime(ds_ap_finished_2015,
+                                  ds_ap_created_2014,  units = "weeks")
+ds_days_projectPeriod
+ds_days_projectPeriodi <- as.integer(ds_days_projectPeriod)
+ds_days_projectPeriodi
+
+ds_ap_projectPeriod <- ds_days_projectPeriodi ^2
+ds_ap_projectPeriod
+
+ds_ap_total <- round(ds_weeksi_mT / ds_ap_projectPeriod, digits = 7)
+ds_ap_total
+
+```
+
+
+## Sustained Engagement: Night at cities
+```{r}
+
+###################################################################
+                  ###   Night at cities   ###
+###################################################################
+
+########### Public Engagement: Sustained Engagement 2014 #################
+
+nightcities2014 <- read.csv("2014/nightcities/nightcitiesiss_task_run_2014.csv")
+attach(nightcities2014)
+summary(nightcities2014)
+
+nc_se_users_2014 <- nightcities2014$task_run__user_id
+nc_se_users_2014Total <- nlevels(nc_se_users_2014)
+nc_se_users_2014Total
+
+nc_se_created_2014 <- "2014-04-27T10:14:56.967737"
+nc_se_finished_2014 <-"2014-12-31T23:23:54.639506"
+
+nc_se_weeks_2014w <- difftime(nc_se_finished_2014, 
+                              nc_se_created_2014, units = "weeks")
+nc_se_weeks_2014w
+nc_se_weeksi_2014w <- as.integer(nc_se_weeks_2014w)
+nc_se_weeksi_2014w
+
+nc_ap_created_2014 <- "2014-04-27T10:14:56.967737"
+nc_ap_finished_2014 <-"2014-12-31T23:23:54.639506"
+
+nc_days_projectPeriod2014 <- difftime(nc_ap_finished_2014,
+                                  nc_ap_created_2014,  units = "weeks")
+nc_days_projectPeriod2014
+nc_days_projectPeriodi2014 <- as.integer(nc_days_projectPeriod2014)
+nc_days_projectPeriodi2014
+
+nc_ap_projectPeriod2014 <- nc_days_projectPeriodi2014 ^2
+nc_ap_projectPeriod2014
+
+nc_ap_total2014 <- round(nc_se_weeksi_2014w / nc_ap_projectPeriod2014, digits = 3)
+nc_ap_total2014
+
+########### Public Engagement: Sustained Engagement 2015 #################
+
+nightcities2015 <- read.csv("2015/nightcities/nightcitiesiss_task_run_2015.csv")
+attach(nightcities2015)
+summary(nightcities2015)
+
+nc_se_users_2015 <- nightcities2015$task_run__user_id
+nc_se_users_2015Total <- nlevels(nc_se_users_2015)
+nc_se_users_2015Total
+
+nc_se_created_2015 <- "2015-01-27T10:14:56.967737"
+nc_se_finished_2015 <-"2015-12-31T23:23:54.639506"
+
+nc_se_weeks_2015w <- difftime(nc_se_finished_2015, 
+                              nc_se_created_2015, units = "weeks")
+nc_se_weeks_2015w
+nc_se_weeksi_2015w <- as.integer(nc_se_weeks_2015w)
+nc_se_weeksi_2015w
+
+
+nc_ap_created_2015 <- "2015-01-27T10:14:56.967737"
+nc_ap_finished_2015 <-"2015-12-31T23:23:54.639506"
+
+nc_days_projectPeriod2015 <- difftime(nc_ap_finished_2015,
+                                  nc_ap_created_2015,  units = "weeks")
+nc_days_projectPeriod2015
+nc_days_projectPeriodi2015 <- as.integer(nc_days_projectPeriod2015)
+nc_days_projectPeriodi2015
+
+nc_ap_projectPeriod2015 <- nc_days_projectPeriodi2015 ^2
+nc_ap_projectPeriod2015
+
+nc_ap_total2015 <- round(nc_se_weeksi_2015w / nc_ap_projectPeriod2015, digits = 3)
+nc_ap_total2015
+
+########### Public Engagement: Sustained Engagement 2016 #################
+
+nightcities2016 <- read.csv("2016/nightcities/nightcitiesiss_task_run_2016.csv")
+attach(nightcities2016)
+summary(nightcities2016)
+
+nc_se_users_2016 <- nightcities2016$task_run__user_id
+nc_se_users_2016Total <- nlevels(nc_se_users_2016)
+nc_se_users_2016Total
+
+nc_se_created_2016 <- "2016-01-27T10:14:56.967737"
+nc_se_finished_2016 <-"2016-09-13T23:23:54.639506"
+
+nc_se_weeks_2016w <- difftime(nc_se_finished_2016, 
+                              nc_se_created_2016, units = "weeks")
+nc_se_weeks_2016w
+nc_se_weeksi_2016w <- as.integer(nc_se_weeks_2016w)
+nc_se_weeksi_2016w
+
+nc_ap_created_2016 <- "2016-01-27T10:14:56.967737"
+nc_ap_finished_2016 <-"2016-09-13T23:23:54.639506"
+
+nc_days_projectPeriod2016 <- difftime(nc_ap_finished_2016,
+                                  nc_ap_created_2016,  units = "weeks")
+nc_days_projectPeriod2016
+nc_days_projectPeriodi2016 <- as.integer(nc_days_projectPeriod2016)
+nc_days_projectPeriodi2016
+
+nc_ap_projectPeriod2016 <- nc_days_projectPeriodi2016 ^2
+nc_ap_projectPeriod2016
+
+nc_ap_total2016 <- round(nc_se_weeksi_2016w / nc_ap_projectPeriod2016, digits = 3)
+nc_ap_total2016
+
+```
+
+## Sustained Engagement: Lost At Night
+
+```{r}
+
+###################################################################
+                  ###   Lost At Night   ###
+###################################################################
+
+########### Public Engagement: Sustained Engagement 2014 #################
+
+
+lostAtNight2014 <- read.csv("2014/lostatnight/LostAtNight_task_run_2014.csv")
+
+ln_se_users_2014 <- lostAtNight2014$task_run__user_id
+ln_se_users_2014Total <- nlevels(ln_se_users_2014)
+ln_se_users_2014Total
+
+ln_se_created_2014 <- "2014-04-27T10:14:56.967737"
+ln_se_finished_2014 <-"2014-12-31T23:23:54.639506"
+
+ln_se_weeks_2014w <- difftime(ln_se_finished_2014, 
+                              ln_se_created_2014, units = "weeks")
+ln_se_weeks_2014w
+ln_se_weeksi_2014w <- as.integer(ln_se_weeks_2014w)
+ln_se_weeksi_2014w
+
+
+ln_ap_created_2014 <- "2014-04-27T10:14:56.967737"
+ln_ap_finished_2014 <-"2014-12-31T23:23:54.639506"
+
+
+ln_days_projectPeriod2014 <- difftime(ln_ap_finished_2014,
+                                  ln_ap_created_2014,  units = "weeks")
+ln_days_projectPeriod2014
+ln_days_projectPeriodi2014 <- as.integer(ln_days_projectPeriod2014)
+ln_days_projectPeriodi2014
+
+ 
+ln_ap_projectPeriod2014 <- ln_days_projectPeriodi2014 ^2
+ln_ap_projectPeriod2014
+
+ln_ap_total2014 <- round(ln_se_weeksi_2014w / ln_ap_projectPeriod2014, digits = 3)
+ln_ap_total2014
+
+########### Public Engagement: Sustained Engagement 2015 #################
+
+
+lostAtNight2015 <- read.csv("2015/lostatnight/LostAtNight_task_run_2015.csv")
+attach(lostAtNight2015)
+summary(lostAtNight2015)
+
+
+ln_se_users_2015 <- lostAtNight2015$task_run__user_id
+ln_se_users_2015Total <- nlevels(ln_se_users_2015)
+ln_se_users_2015Total
+
+ln_se_created_2015 <- "2015-01-01T10:14:56.967737"
+ln_se_finished_2015 <-"2015-12-31T23:23:54.639506"
+
+ln_se_weeks_2015w <- difftime(ln_se_finished_2015, 
+                              ln_se_created_2015, units = "weeks")
+ln_se_weeks_2015w
+ln_se_weeksi_2015w <- as.integer(ln_se_weeks_2015w)
+ln_se_weeksi_2015w
+
+ln_ap_created_2015 <- "2015-01-01T10:14:56.967737"
+ln_ap_finished_2015 <-"2015-12-31T23:23:54.639506"
+
+
+ln_days_projectPeriod2015 <- difftime(ln_ap_finished_2015,
+                                  ln_ap_created_2015,  units = "weeks")
+ln_days_projectPeriod2015
+ln_days_projectPeriodi2015 <- as.integer(ln_days_projectPeriod2015)
+ln_days_projectPeriodi2015
+
+
+ln_ap_projectPeriod2015 <- ln_days_projectPeriodi2015 ^2
+ln_ap_projectPeriod2015
+
+ln_ap_total2015 <- round(ln_se_weeksi_2015w / ln_ap_projectPeriod2015, digits = 3)
+ln_ap_total2015
+
+########### Public Engagement: Sustained Engagement 2016 #################
+
+
+lostAtNight2016 <- read.csv("2016/lostatnight/LostAtNight_task_run_2016.csv")
+attach(lostAtNight2016)
+summary(lostAtNight2016)
+
+
+ln_se_users_2016 <- lostAtNight2016$task_run__user_id
+ln_se_users_2016Total <- nlevels(ln_se_users_2016)
+ln_se_users_2016Total
+
+ln_se_created_2016 <- "2016-01-01T10:14:56.967737"
+ln_se_finished_2016 <-"2016-11-28T23:23:54.639506"
+
+ln_se_weeks_2016w <- difftime(ln_se_finished_2016, 
+                              ln_se_created_2016, units = "weeks")
+ln_se_weeks_2016w
+ln_se_weeksi_2016w <- as.integer(ln_se_weeks_2016w)
+ln_se_weeksi_2016w
+
+
+ln_ap_created_2016 <- "2016-01-01T10:14:56.967737"
+ln_ap_finished_2016 <-"2016-11-28T23:23:54.639506"
+
+
+ln_days_projectPeriod2016 <- difftime(ln_ap_finished_2016,
+                                  ln_ap_created_2016,  units = "weeks")
+ln_days_projectPeriod2016
+ln_days_projectPeriodi2016 <- as.integer(ln_days_projectPeriod2016)
+ln_days_projectPeriodi2016
+
+
+ln_ap_projectPeriod2016 <- ln_days_projectPeriodi2016 ^2
+ln_ap_projectPeriod2016
+
+ln_ap_total2016 <- round(ln_se_weeksi_2016w / ln_ap_projectPeriod2016, digits = 3)
+ln_ap_total2016
+
+```
+
+
+
+## Dark Skies, Public Engagement: Public Contribution
+```{r}
+
+###################################################################
+                  ###   Dark Skies  ###
+###################################################################
+
+########### Public Engagement: Public Contribution 2014 #################
+
+
+ds_classifications_2014 <- darkskies2014$task_runinfo__classification
+
+ds_classifications_2014Number <- nlevels(ds_classifications_2014)
+
+ds_classificationsTable2014 <- table(darkskies2014$task_runinfo__classification)
+ds_classificationsDF2014 <- data.frame(ds_classificationsTable2014)
+
+ds_classificationsDF2014Sum <-  sum(ds_classificationsDF2014$Freq)
+ds_classificationsDF2014Sum
+
+ds_classificationsDF2014Media <- median(ds_classificationsDF2014$Freq, na.rm = FALSE)
+ds_classificationsDF2014Media
+
+
+ds_classification_created_2014 <- "2014-04-27T10:14:56.967737"
+ds_classification_finished_2014 <-"2014-12-31T23:23:54.639506"
+
+ds_days_2014 <- difftime(ds_classification_finished_2014, ds_classification_created_2014)
+ds_days_2014
+ds_daysi_2014 <- as.integer(ds_days_2014)
+ds_daysi_2014
+
+ds_2014_projectPeriod <- ds_daysi_2014 ^2
+ds_2014_projectPeriod
+
+ds_classification_2014_total <- ds_classificationsDF2014Media / ds_2014_projectPeriod
+ds_classification_2014_total
+ds_2014_publicContributionTotal <- ds_classification_2014_total * 100
+ds_publicContribution_2014 <- round(ds_2014_publicContributionTotal, digits = 2)
+ds_publicContribution_2014
+
+
+########### Public Engagement: Public Contribution 2015 #################
+
+
+ds_classifications_2015 <- darkskies2015$task_runinfo__classification
+
+ds_classifications_2015Number <- nlevels(ds_classifications_2015)
+
+ds_classificationsTable2015 <- table(darkskies2015$task_runinfo__classification)
+ds_classificationsDF2015 <- data.frame(ds_classificationsTable2015)
+
+ds_classificationsDF2015Sum <-  sum(ds_classificationsDF2015$Freq)
+ds_classificationsDF2015Sum
+
+ds_classificationsDF2015Media <- median(ds_classificationsDF2015$Freq, na.rm = FALSE)
+ds_classificationsDF2015Media
+
+
+ds_classification_created_2015 <- "2015-01-01T00:10:59.319297"
+ds_classification_finished_2015 <-"2015-04-07T20:13:42.313438"
+
+
+ds_days_2015 <- difftime(ds_classification_finished_2015, ds_classification_created_2015)
+ds_days_2015
+ds_daysi_2015 <- as.integer(ds_days_2015)
+ds_daysi_2015
+
+ds_2015_projectPeriod <- ds_daysi_2015 ^2
+ds_2015_projectPeriod
+
+ds_classification_2015_total <- ds_classificationsDF2015Media / ds_2015_projectPeriod
+ds_classification_2015_total
+ds_2015_publicContributionTotal <- ds_classification_2015_total * 100
+ds_publicContribution_2015 <- round(ds_2015_publicContributionTotal, digits = 2)
+ds_publicContribution_2015
+
+########### Public Engagement: Public Contribution 2016 #################
+
+
+ds_classifications_2015 <- darkskies2015$task_runinfo__classification
+
+ds_classifications_2015Number <- nlevels(ds_classifications_2015)
+
+ds_classificationsTable2015 <- table(darkskies2015$task_runinfo__classification)
+ds_classificationsDF2015 <- data.frame(ds_classificationsTable2015)
+
+ds_classificationsDF2015Sum <-  sum(ds_classificationsDF2015$Freq)
+ds_classificationsDF2015Sum
+
+ds_classificationsDF2015Media <- median(ds_classificationsDF2015$Freq, na.rm = FALSE)
+ds_classificationsDF2015Media
+
+
+ds_classification_created_2015 <- "2015-01-01T00:10:59.319297"
+ds_classification_finished_2015 <-"2015-04-07T20:13:42.313438"
+
+
+ds_days_2015 <- difftime(ds_classification_finished_2015, ds_classification_created_2015)
+ds_days_2015
+ds_daysi_2015 <- as.integer(ds_days_2015)
+ds_daysi_2015
+
+ds_2015_projectPeriod <- ds_daysi_2015 ^2
+ds_2015_projectPeriod
+
+ds_classification_2015_total <- ds_classificationsDF2015Media / ds_2015_projectPeriod
+ds_classification_2015_total
+ds_2015_publicContributionTotal <- ds_classification_2015_total * 100
+ds_publicContribution_2015 <- round(ds_2015_publicContributionTotal, digits = 2)
+ds_publicContribution_2015
+
+
+ds_created_F <- "2016-01-01T00:10:59.319297"
+ds_finished_F <-"2016-12-04T01:18:27.103462"
+ds_days_2014Fw <- difftime(ds_finished_F, ds_created_F, units = "weeks")
+ds_days_2014Fw
+
+```
+
+## Night Cities, Public Engagement: Public Contribution
+
+```{r}
+
+###################################################################
+                  ###   Night Cities   ###
+###################################################################
+
+########### Public Engagement: Public Contribution 2014 #################
+
+
+nc_classifications_2014 <- nightcities2014$task_runinfo__imageResult
+
+nc_classifications_2014Number <- nlevels(nc_classifications_2014)
+
+nc_classificationsTable2014 <- table(nightcities2014$task_runinfo__imageResult)
+nc_classificationsDF2014 <- data.frame(nc_classificationsTable2014)
+
+nc_classificationsDF2014Sum <-  sum(nc_classificationsDF2014$Freq)
+nc_classificationsDF2014Sum
+
+nc_classificationsDF2014Media <- median(nc_classificationsDF2014$Freq, na.rm = FALSE)
+nc_classificationsDF2014Media
+
+
+nc_classification_created_2014 <- "2014-04-27T10:14:56.967737"
+nc_classification_finished_2014 <-"2014-12-31T23:23:54.639506"
+
+
+nc_days_2014 <- difftime(nc_classification_finished_2014, nc_classification_created_2014)
+nc_days_2014
+nc_daysi_2014 <- as.integer(nc_days_2014)
+nc_daysi_2014
+
+nc_2014_projectPeriod <- nc_daysi_2014 ^2
+nc_2014_projectPeriod
+
+nc_classification_2014_total <- nc_classificationsDF2014Media / nc_2014_projectPeriod
+nc_classification_2014_total
+nc_2014_publicContributionTotal <- nc_classification_2014_total * 100
+nc_publicContribution_2014 <- round(nc_2014_publicContributionTotal, digits = 2)
+nc_publicContribution_2014
+
+
+########### Public Engagement: Public Contribution 2015 #################
+
+
+nc_classifications_2015 <- nightcities2015$task_runinfo__imageResult
+
+nc_classifications_2015Number <- nlevels(nc_classifications_2015)
+
+nc_classificationsTable2015 <- table(nightcities2015$task_runinfo__imageResult)
+nc_classificationsDF2015 <- data.frame(nc_classificationsTable2015)
+
+nc_classificationsDF2015Sum <-  sum(nc_classificationsDF2015$Freq)
+nc_classificationsDF2015Sum
+
+nc_classificationsDF2015Media <- median(nc_classificationsDF2015$Freq, na.rm = FALSE)
+nc_classificationsDF2015Media
+
+
+nc_classification_created_2015 <- "2015-01-01T13:13:32.166716"
+nc_classification_finished_2015 <-"2015-12-31T12:25:51.060094"
+
+
+
+nc_days_2015 <- difftime(nc_classification_finished_2015, nc_classification_created_2015)
+nc_days_2015
+nc_daysi_2015 <- as.integer(nc_days_2015)
+nc_daysi_2015
+
+nc_2015_projectPeriod <- nc_daysi_2015 ^2
+nc_2015_projectPeriod
+
+nc_classification_2015_total <- nc_classificationsDF2015Media / nc_2015_projectPeriod
+nc_classification_2015_total
+nc_2015_publicContributionTotal <- nc_classification_2015_total * 100
+nc_publicContribution_2015 <- round(nc_2015_publicContributionTotal, digits = 2)
+nc_publicContribution_2015
+
+
+########### Public Engagement: Public Contribution 2016 #################
+
+
+nc_classifications_2016 <- nightcities2016$task_runinfo__imageResult
+
+nc_classifications_2016Number <- nlevels(nc_classifications_2016)
+
+nc_classificationsTable2016 <- table(nightcities2016$task_runinfo__imageResult)
+nc_classificationsDF2016 <- data.frame(nc_classificationsTable2016)
+
+nc_classificationsDF2016Sum <-  sum(nc_classificationsDF2016$Freq)
+nc_classificationsDF2016Sum
+
+nc_classificationsDF2016Media <- median(nc_classificationsDF2016$Freq, na.rm = FALSE)
+nc_classificationsDF2016Media
+
+
+nc_classification_created_2016 <- "2016-01-01T00:55:18.787305"
+nc_classification_finished_2016 <-"2016-09-13T09:06:55.030701"
+
+
+nc_days_2016 <- difftime(nc_classification_finished_2016, nc_classification_created_2016)
+nc_days_2016
+nc_daysi_2016 <- as.integer(nc_days_2016)
+nc_daysi_2016
+
+nc_2016_projectPeriod <- nc_daysi_2016 ^2
+nc_2016_projectPeriod
+
+nc_classification_2016_total <- nc_classificationsDF2016Media / nc_2016_projectPeriod
+nc_classification_2016_total
+nc_2016_publicContributionTotal <- nc_classification_2016_total * 100
+nc_publicContribution_2016 <- round(nc_2016_publicContributionTotal, digits = 2)
+nc_publicContribution_2016
+
+
+```
+
+## Lost At Night, Public Engagement: Public Contribution
+
+```{r}
+
+###################################################################
+                  ###   Lost at night   ###
+###################################################################
+
+########### Public Engagement: Public Contribution 2014 #################
+
+
+ln_classifications_2014 <- lostAtNight2015$task_runinfo__imageResult
+
+ln_classifications_2014Number <- nlevels(ln_classifications_2014)
+
+ln_classificationsTable2014 <- table(lostAtNight2015$task_runinfo__imageResult)
+ln_classificationsDF2014 <- data.frame(ln_classificationsTable2014)
+
+ln_classificationsDF2014Sum <-  sum(ln_classificationsDF2014$Freq)
+ln_classificationsDF2014Sum
+
+ln_classificationsDF2014Media <- median(ln_classificationsDF2014$Freq, na.rm = FALSE)
+ln_classificationsDF2014Media
+
+
+ln_classification_created_2014 <- "2014-07-08T16:40:45.518713"
+ln_classification_finished_2014 <-"2014-12-31T22:42:53.435242"
+
+
+ln_days_2014 <- difftime(ln_classification_finished_2014, ln_classification_created_2014)
+ln_days_2014
+ln_daysi_2014 <- as.integer(ln_days_2014)
+ln_daysi_2014
+
+ln_2014_projectPeriod <- ln_daysi_2014 ^2
+ln_2014_projectPeriod
+
+ln_classification_2014_total <- ln_classificationsDF2014Media / ln_2014_projectPeriod
+ln_classification_2014_total
+ln_2014_publicContributionTotal <- ln_classification_2014_total * 100
+ln_publicContribution_2014 <- round(ln_2014_publicContributionTotal, digits = 2)
+ln_publicContribution_2014
+
+
+########### Public Engagement: Public Contribution 2015 #################
+
+
+ln_classifications_2015 <- lostAtNight2015$task_runinfo__imageResult
+
+ln_classifications_2015Number <- nlevels(ln_classifications_2015)
+
+ln_classificationsTable2015 <- table(lostAtNight2015$task_runinfo__imageResult)
+ln_classificationsDF2015 <- data.frame(ln_classificationsTable2015)
+
+ln_classificationsDF2015Sum <-  sum(ln_classificationsDF2015$Freq)
+ln_classificationsDF2015Sum
+
+ln_classificationsDF2015Media <- median(ln_classificationsDF2015$Freq, na.rm = FALSE)
+ln_classificationsDF2015Media
+
+
+ln_classification_created_2015 <- "2015-01-01T00:13:53.498091"
+ln_classification_finished_2015 <-"2015-12-31T16:12:34.492702"
+
+
+ln_days_2015 <- difftime(ln_classification_finished_2015, ln_classification_created_2015)
+ln_days_2015
+ln_daysi_2015 <- as.integer(ln_days_2015)
+ln_daysi_2015
+
+ln_2015_projectPeriod <- ln_daysi_2015 ^2
+ln_2015_projectPeriod
+
+ln_classification_2015_total <- ln_classificationsDF2015Media / ln_2015_projectPeriod
+ln_classification_2015_total
+ln_2015_publicContributionTotal <- ln_classification_2015_total * 100
+ln_publicContribution_2015 <- round(ln_2015_publicContributionTotal, digits = 2)
+ln_publicContribution_2015
+
+########### Public Engagement: Public Contribution 2016 #################
+
+########### Public Engagement: Public Contribution 2016 #################
+
+
+ln_classifications_2016 <- lostAtNight2016$task_runinfo__imageResult
+
+ln_classifications_2016Number <- nlevels(ln_classifications_2016)
+
+ln_classificationsTable2016 <- table(lostAtNight2016$task_runinfo__imageResult)
+ln_classificationsDF2016 <- data.frame(ln_classificationsTable2016)
+
+ln_classificationsDF2016Sum <-  sum(ln_classificationsDF2016$Freq)
+ln_classificationsDF2016Sum
+
+ln_classificationsDF2016Media <- median(ln_classificationsDF2016$Freq, na.rm = FALSE)
+ln_classificationsDF2016Media
+
+
+ln_classification_created_2016 <- "2016-01-04T01:18:27.316607"
+ln_classification_finished_2016 <- "2016-11-28T23:40:47.413624"
+
+
+ln_days_2016 <- difftime(ln_classification_finished_2016, ln_classification_created_2016)
+ln_days_2016
+ln_daysi_2016 <- as.integer(ln_days_2016)
+ln_daysi_2016
+
+ln_2016_projectPeriod <- ln_daysi_2016 ^2
+ln_2016_projectPeriod
+
+ln_classification_2016_total <- ln_classificationsDF2016Media / ln_2016_projectPeriod
+ln_classification_2016_total
+ln_2016_publicContributionTotal <- ln_classification_2016_total * 100
+ln_publicContribution_2016 <- round(ln_2016_publicContributionTotal, digits = 2)
+ln_publicContribution_2016
+
+```
+
+
+## Public Appeal Graph
+```{r}
+
+publicContributionBar <- data.frame(
+  project_name = factor(c("Dark skies","Night Cities", "Lost at Night"),
+                levels=c("Dark skies","Night Cities", "Lost at Night")),
+  projectContribution = c(ds_publicContribution, ln_publicContribution,
+                    ln_publicContribution)
+            )
+publicContributionBar
+
+publicContributionGB <- ggplot(data=publicContributionBar, 
+            aes(x=project_name, y=projectContribution, fill=project_name)) +
+            geom_bar(stat="identity") +  coord_flip() + 
+            geom_text(aes(label=projectContribution), hjust = 1, vjust=1,
+                                    colour="black") +
+           xlab("Project Contribution") + ylab("Project name") +
+                          ggtitle("publicContributionBar")
+
+publicContributionGB
+
+```
+
+
+
+## Dark Skies,Distribution of Effort: Gini index
+
+```{r}
+
+########## Project Design and Resource Allocation: Distrubution of Effort 2014 #############
+
+de_gini_2014_DS <- Gini(ds_classificationsDF2014$Freq, na.rm = TRUE) # <- Here, I need to change the year
+distributionEffortR_2014 <- 1 - de_gini_2014_DS
+distributionEffortDS_2014 <- round(distributionEffortR_2014, digits = 2)
+distributionEffortDST_2014 <- distributionEffortDS_2014 * 100
+distributionEffortDST_2014
+
+plot(Lc(ds_classificationsDF2014$Freq))
+plot(Lc(ds_classificationsDF2014$Freq),col="darkred",lwd=2)
+
+########## Project Design and Resource Allocation: Distrubution of Effort 2015 #############
+
+de_gini_2015_DS <- Gini(ds_classificationsDF2015$Freq, na.rm = TRUE) # <- Here, I need to change the year
+distributionEffortR_2015 <- 1 - de_gini_2015_DS
+distributionEffortDS_2015 <- round(distributionEffortR_2015, digits = 2)
+distributionEffortDST_2015 <- distributionEffortDS_2015 * 100
+distributionEffortDST_2015
+
+plot(Lc(ds_classificationsDF2015$Freq))
+plot(Lc(ds_classificationsDF2015$Freq),col="darkred",lwd=2)
+
+
+```
+
+
+## Night Cities, Distribution of Effort: Gini index
+
+```{r}
+
+########## Project Design and Resource Allocation: Distrubution of Effort 2014 #############
+
+
+de_gini_2014_NC <- Gini(nc_classificationsDF2014$Freq, na.rm = TRUE) 
+distributionEffortNCR_2014 <- 1 - de_gini_2014_NC
+distributionEffortNC_2014 <- round(distributionEffortNCR_2014, digits = 2)
+distributionEffortNCT_2014 <- distributionEffortNC_2014 * 100
+distributionEffortNCT_2014
+
+plot(Lc(nc_classificationsDF2014$Freq))
+plot(Lc(nc_classificationsDF2014$Freq),col="darkred",lwd=2)
+
+########## Project Design and Resource Allocation: Distrubution of Effort 2015 #############
+
+#Distribution of Effort, Dark Skies applying the library(ineq)
+de_gini_2015_NC <- Gini(nc_classificationsDF2015$Freq, na.rm = TRUE) 
+distributionEffortNCR_2015 <- 1 - de_gini_2015_NC
+distributionEffortNC_2015 <- round(distributionEffortNCR_2015, digits = 2)
+distributionEffortNCT_2015 <- distributionEffortNC_2015 * 100
+distributionEffortNCT_2015
+
+plot(Lc(nc_classificationsDF2015$Freq))
+plot(Lc(nc_classificationsDF2015$Freq),col="darkred",lwd=2)
+
+########## Project Design and Resource Allocation: Distrubution of Effort 2016 #############
+
+#Distribution of Effort, Dark Skies applying the library(ineq)
+de_gini_2016_NC <- Gini(nc_classificationsDF2016$Freq, na.rm = TRUE) 
+distributionEffortNCR_2016 <- 1 - de_gini_2016_NC
+distributionEffortNC_2016 <- round(distributionEffortNCR_2016, digits = 2)
+distributionEffortNCT_2016 <- distributionEffortNC_2016 * 100
+distributionEffortNCT_2016
+
+plot(Lc(nc_classificationsDF2016$Freq))
+plot(Lc(nc_classificationsDF2016$Freq),col="darkred",lwd=2)
+
+
+```
+
+## Lost At Night, Distribution of Effort: Gini index
+
+```{r}
+
+########## Project Design and Resource Allocation: Distrubution of Effort 2014 #############
+
+#Distribution of Effort, Dark Skies applying the library(ineq)
+de_gini_2014_LN <- Gini(ln_classificationsDF2014$Freq, na.rm = TRUE) 
+distributionEffortLNR_2014 <- 1 - de_gini_2014_LN
+distributionEffortLN_2014 <- round(distributionEffortLNR_2014, digits = 2)
+distributionEffortLNT_2014 <- distributionEffortLN_2014 * 100
+distributionEffortLNT_2014
+
+plot(Lc(ln_classificationsDF2014$Freq))
+plot(Lc(ln_classificationsDF2014$Freq),col="darkred",lwd=2)
+
+########## Project Design and Resource Allocation: Distrubution of Effort 2015 #############
+
+#Distribution of Effort, Dark Skies applying the library(ineq)
+de_gini_2015_LN <- Gini(ln_classificationsDF2015$Freq, na.rm = TRUE) 
+distributionEffortLNR_2015 <- 1 - de_gini_2015_LN
+distributionEffortLN_2015 <- round(distributionEffortLNR_2015, digits = 2)
+distributionEffortLNT_2015 <- distributionEffortLN_2015 * 100
+distributionEffortLNT_2015
+
+plot(Lc(ln_classificationsDF2015$Freq))
+plot(Lc(ln_classificationsDF2015$Freq),col="darkred",lwd=2)
+
+########## Project Design and Resource Allocation: Distrubution of Effort 2016 #############
+
+#Distribution of Effort, Dark Skies applying the library(ineq)
+de_gini_2016_LN <- Gini(ln_classificationsDF2016$Freq, na.rm = TRUE) 
+distributionEffortLNR_2016 <- 1 - de_gini_2016_LN
+distributionEffortLN_2016 <- round(distributionEffortLNR_2016, digits = 2)
+distributionEffortLNT_2016 <- distributionEffortLN_2016 * 100
+distributionEffortLNT_2016
+
+plot(Lc(ln_classificationsDF2016$Freq))
+plot(Lc(ln_classificationsDF2016$Freq),col="darkred",lwd=2)
+
+
+```
+
+
+#Gini Index graph
+```{r}
+
+giniBar <- data.frame(
+  project_name = factor(c("Dark skies","Night Cities", "Lost at Night"),
+                levels=c("Dark skies","Night Cities", "Lost at Night")),
+  giniResults = c(distributionEffortDS, distributionEffortNC,
+                  distributionEffortLN)
+                  )
+giniBar
+
+# Map the project name to different fill colors
+giniB <- ggplot(data=giniBar, 
+            aes(x=project_name, y=giniResults, fill=project_name)) +
+            geom_bar(stat="identity") +  coord_flip() + 
+            geom_text(aes(label=giniResults), hjust = 1, vjust=1,
+                                    colour="black") +
+           xlab("Project name") + ylab("Gini coefficient") +
+                          ggtitle("Distribution of Effort")
+
+giniB
+
+#Results
+s4aTable <- data.frame(
+    project_name = factor(c("Dark skies","Night Cities", "Lost at Night"),
+                levels=c("Dark skies","Night Cities", "Lost at Night")),
+    
+    # pe_measurement = factor(c("Project Appeal","Sustained Engagement ", 
+    #                           "Public Contribution"),
+    #                       
+    #             levels=c("Project Appeal","Sustained Engagement ", 
+    #                      "Public Contribution")),
+                            
+    measurement=c("Project Appeal","Project Appeal", "Project Appeal",
+              "Distribution of Effort", "Distribution of Effort", 
+              "Distribution of Effort"),
+    s4aResults = c(ds_projectAppeal,
+                  nc_projectAppeal,
+                  ln_projectAppeal,
+                  distributionEffortDS, 
+                  distributionEffortNC,
+                  distributionEffortLN)
+                  )
+s4aTable
+
+s4aR <- ggplot(data=s4aTable, 
+            aes(x=project_name, y=s4aResults, fill=s4aResults)) +
+            geom_bar(stat="identity") +  coord_flip() + 
+            geom_text(aes(label=s4aResults), hjust = .1, vjust=.1,
+                                    colour="white") +
+           xlab("Project name") + ylab("Results") +
+                          ggtitle("Participation and Opportunities for Learning")
+
+
+s4aR
+
+
+## Health Matrix: Contribution to Science
+cs_ProjectName      <- c(rep(c("Dark skies","Night Cities", 
+                            "Lost at Night"), each = 3))
+cs_Measurement  <- c(rep(c("Resource Savings",  "Distribution of Effort", 
+                         "Effective Training" ), times = 3))
+cs_Frequency <- c(.0, .0, .0, .37, .58, .50, .0, .0, .0)
+
+cs_Data      <- data.frame(Year, Category, Frequency)
+
+cts <- ggplot(cs_Data, 
+       aes(x = cs_ProjectName, y = cs_Frequency, fill = cs_Measurement,
+           label = cs_Frequency)) +
+      geom_bar(stat = "identity") + coord_flip() + 
+      geom_text(size = 3, hjust = 1.0, vjust=.1,   colour="white" )  + 
+      xlab("Project name") + ylab("Frequency") +
+      ggtitle("Contribution to Science")
+
+cts
+
+
+## Health Matrix: Public Engagement
+pe_ProjectName      <- c(rep(c("Dark skies","Night Cities", 
+                            "Lost at Night"), each = 3))
+pe_Measurement  <- c(rep(c("Project Appeal",  "Sustained Engagement", 
+                         "Public Contribution" ), times = 3))
+pe_Frequency <- c(.20, .78, 1.77, .12, .03, 1.77, .0, .0, .0)
+
+pe_Data      <- data.frame(Year, Category, Frequency)
+
+pe <- ggplot(pe_Data, 
+       aes(x = pe_ProjectName, y = pe_Frequency, fill = pe_Measurement, 
+           label = pe_Frequency)) +
+      geom_bar(stat = "identity") + coord_flip() + 
+      #geom_text(size = 3, hjust = 1.2, vjust=.1, position = position_stack()) +
+      geom_text(size = 3, hjust = 1.2, vjust=.1,   colour="white" )  + 
+      xlab("") + ylab("Frequency") +
+      ggtitle("Participation and Opportunities for Learning")
+
+pe
+
+
+```
+
+

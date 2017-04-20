@@ -1,0 +1,66 @@
+---
+title: "S4A Time Series"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+
+---
+
+```{r setup, include=FALSE}
+
+
+library(flexdashboard)
+library(dygraphs)
+library(TTR)
+library(quantmod)
+library(lubridate)
+library(xts)
+library(zoo)
+
+#################################  Dark Skies #####################################
+
+dark_skies <- read.csv("TimesSeries/s4aProjects_DS_TS.csv")
+
+
+ds_ts <- xts(dark_skies, order.by = as.Date(dark_skies$Month), '%a %b %d')
+ds_ts
+
+dygraph(ds_ts[,4:5])
+
+
+#################################  Nitght Cities #####################################
+
+night_citiess <- read.csv("TimesSeries/s4aProjects_NC_TS.csv")
+attach(night_citiess)
+
+nc_ts <- xts(night_citiess, order.by = as.Date(night_citiess$Month), '%a %b %d')
+nc_ts
+
+
+#################################  Lost At Night #####################################
+
+lost_night <- read.csv("TimesSeries/s4aProjects_LN_TS.csv")
+
+ln_ts <- xts(lost_night, order.by = as.Date(lost_night$Month), '%a %b %d')
+ln_ts
+
+
+#################################  Projects #####################################
+
+s4a_A_C <- read.csv("TimesSeries/s4aProjects_TS_A_C.csv")
+attach(s4a_A_C)
+
+s4a_A_C_ts <- xts(s4a_A_C, order.by = as.Date(s4a_A_C$Month), '%a %b %d')
+
+```
+
+
+### Projects
+
+```{r}
+
+dygraph(s4a_A_C_ts[,2:4]) %>% 
+  dyRangeSelector()
+
+```
+
