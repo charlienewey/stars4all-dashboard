@@ -1,0 +1,25 @@
+---
+
+- name: update package index and upgrade packages
+  apt: upgrade=full update_cache=yes cache_valid_time={{apt_cache_valid_time}}
+
+- name: upgrade kernel
+  apt: upgrade=dist update_cache=yes cache_valid_time={{apt_cache_valid_time}}
+
+- name: install update-notifier-common for automatic reboots
+  apt: name=update-notifier-common state=latest cache_valid_time={{apt_cache_valid_time}}
+
+- name: install unattended upgrades
+  apt: name=unattended-upgrades state=latest update_cache=yes cache_valid_time={{apt_cache_valid_time}}
+
+- name: configure unattended upgrades
+  copy: src=../files/unattended_upgrades_periodic dest=/etc/apt/apt.conf.d/10periodic
+
+- name: install latest version of useful packages
+  apt: name={{item}} state=latest update_cache=yes cache_valid_time={{apt_cache_valid_time}}
+  with_items:
+    - python-setuptools
+    - python-pip
+    - python3-setuptools
+    - python3-pip
+    - language-pack-en
