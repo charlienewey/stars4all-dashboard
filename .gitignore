@@ -1,7 +1,9 @@
 *.csv
 .DS_Store
+.Rhistory
 .cache
 .ipynb_checkpoints
 .ipython
+.jupyter
 .local
 .vagrant
