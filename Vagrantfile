@@ -20,10 +20,9 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.network "forwarded_port", guest: 8888, host: 8888
-
-  config.vm.synced_folder "./", "/vagrant",
+  config.vm.synced_folder "./", "/home/ubuntu/Notebooks",
     id: "vagrant-root",
-    owner: "charlie",
+    owner: "ubuntu",
     group: "ubuntu",
     mount_options: ["dmode=775,fmode=664"]
 end

@@ -24,5 +24,3 @@
   roles:
     - role: jupyterhub
       become: yes
-    - role: user
-      become: yes
