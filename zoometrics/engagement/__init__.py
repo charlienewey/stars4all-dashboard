@@ -1,49 +1,47 @@
+import datetime
+
 def _active_weeks(last, first):
     delta = last - first
     return delta.days / 7.0
 
-def project_appeal(dataframe, start_date,
-        user_field="task_run__user_id"):
+def project_appeal(series, project_start_date):
     # Number of users
-    num_users = dataframe.groupby(user_field).count().shape[0]
+    num_users = series.groupby(series).count().shape[0]
 
     # Project's active time
-    last = dataframe.sort_index().index[-1]
-    active_weeks = _active_weeks(last, start_date)
+    last = series.sort_index().index[-1]
+    active_weeks = _active_weeks(last, project_start_date)
 
     return num_users / (active_weeks ** 2)
 
-def public_contribution(dataframe, start_date,
-        user_field="task_run__user_id"):
+def public_contribution(series, project_start_date):
     # Calculate classifications per user
-    median_cpu = period.groupby(by=[user_field])[user_field].count().median()
+    median_cpu = series.groupby(series).count().median()
 
     # Project's active time
-    last = dataframe.sort_index().index[-1]
-    active_weeks = _active_weeks(last, start_date)
+    last = series.sort_index().index[-1]
+    active_weeks = _active_weeks(last, project_start_date)
 
-    return median_cpu / (active_period ** 2)
+    return median_cpu / (active_weeks ** 2)
 
-def sustained_engagement(dataframe, start_date,
-        user_field="task_run__user_id",
-        time_field="task_run__created"):
-    # First contribution for each user
-    fst = pd.to_datetime(df.groupby(by=[user_field]).first()[time_field])
-    fst = fst.reset_index().set_index(user_field)
+def sustained_engagement(series, fst, project_start_date,
+                         time_field="task_run__finish_time",
+                         user_field="task_run__user_id"):
 
-    # Most recent contribution for each user
-    lst = pd.to_datetime(dataframe.groupby(by=[user_field]).last()[time_field])
-    lst = lst.reset_index().set_index(user_field)
+    # Put DataFrames together
+    first = fst.reset_index()
+    period = series.reset_index()
 
-    fst_lst = lst.join(fst, how="left", rsuffix="_fst")
+    # Calculate most recent contributions this year for each user
+    last = period.groupby(period.columns[-1]).last().reset_index()
+    first_last = first.merge(last, left_on=user_field, right_on=last.columns[0], how="right")
 
-    delta = fst_lst[time_field] - fst_lst[time_field + "_fst"]
-
-    # Median user active period
-    median_uap = delta.median(axis=0).total_seconds() / 604800.0
+    # Calculate median user active period (in weeks)
+    user_weeks = first_last["index"] - first_last[time_field]
+    median_uap = (user_weeks / datetime.timedelta(days=7)).median()
 
     # Project's active time
-    last = dataframe.sort_index().index[-1]
-    active_weeks = _active_weeks(last, start_date)
+    last = series.index[-1]
+    active_weeks = _active_weeks(last, project_start_date)
 
-    return median_uap / (active_period ** 2)
+    return median_uap / (active_weeks ** 2)

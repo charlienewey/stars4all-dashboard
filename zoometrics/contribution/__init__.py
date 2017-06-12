@@ -1,8 +1,8 @@
 import numpy as np
 
-def distribution_of_effort(dataframe, user_field="task_run__user_id"):
+def distribution_of_effort(series):
     # Calculate classifications per user
-    cpu = dataframe.groupby(by=[user_field])[user_field].count()
+    cpu = series.groupby(by=series).count()
     return 1 - gini(cpu)
 
 
@@ -20,4 +20,4 @@ def gini(arr):
     """
     arr = np.sort(np.ravel(arr))
     ind = np.arange(1, len(arr) + 1)
-    return np.sum((((2 * ind) - len(cpu) - 1) * arr)) / float(len(arr) * np.sum(arr))
+    return np.sum((((2 * ind) - len(arr) - 1) * arr)) / float(len(arr) * np.sum(arr))
