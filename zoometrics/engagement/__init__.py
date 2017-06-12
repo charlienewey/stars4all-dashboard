@@ -2,7 +2,11 @@ import datetime
 
 def _active_weeks(last, first):
     delta = last - first
-    return delta.days / 7.0
+    weeks = delta.days / 7.0
+
+    if weeks == 0:
+        return 1
+    return weeks
 
 def project_appeal(series, project_start_date):
     # Number of users
