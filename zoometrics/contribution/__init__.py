@@ -20,4 +20,11 @@ def gini(arr):
     """
     arr = np.sort(np.ravel(arr))
     ind = np.arange(1, len(arr) + 1)
-    return np.sum((((2 * ind) - len(arr) - 1) * arr)) / float(len(arr) * np.sum(arr))
+
+    num = np.sum((((2 * ind) - len(arr) - 1) * arr))
+    denom = float(len(arr) * np.sum(arr))
+
+    if denom <= 0:
+        return 0.0
+    else:
+        return num / denom
