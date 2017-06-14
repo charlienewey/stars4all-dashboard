@@ -1,0 +1,22 @@
+{
+  "name": "stars4all-visualisation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/charlienewey/stars4all-dashboard.git"
+  },
+  "author": "Charles Newey",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/charlienewey/stars4all-dashboard/issues"
+  },
+  "homepage": "https://github.com/charlienewey/stars4all-dashboard#readme",
+  "dependencies": {
+    "d3": "^4.9.1"
+  }
+}
