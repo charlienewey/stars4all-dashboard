@@ -21,12 +21,12 @@ text {
   fill: #777;
 }
 
-.year.label {
-  font: 500 196px "Helvetica Neue";
+.date.label {
+  font: 500 126px monospace;
   fill: #ddd;
 }
 
-.year.label.active {
+.date.label.active {
   fill: #aaa;
 }
 

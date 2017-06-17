@@ -1,79 +1,91 @@
 // Various accessors that specify the four dimensions of data to visualize.
-function x(d) { return d.income; }
-function y(d) { return d.lifeExpectancy; }
-function radius(d) { return d.population; }
-function color(d) { return d.region; }
+// name, contribution, appeal, engagement, effort
+function x(d) { return d.appeal; }
+function y(d) { return d.effort; }
+function radius(d) { return d.engagement; }
+function color(d) { return d.name; }
 function key(d) { return d.name; }
 
+var dateSpecifier = "%Y-%m-%d";
+var dateParse = d3.timeParse(dateSpecifier);
+var dateFormat = d3.timeFormat(dateSpecifier);
+var startDate = dateParse("2014-10-01");
+var endDate = dateParse("2018-01-01");
+
 // Chart dimensions.
-var margin = {top: 19.5, right: 19.5, bottom: 19.5, left: 39.5},
-    width = 960 - margin.right,
-    height = 500 - margin.top - margin.bottom;
+var margin = {
+  top: 20,
+  right: 20,
+  bottom: 20,
+  left: 100
+};
+
+var width = 960 - margin.right;
+var height = 500 - margin.top - margin.bottom;
 
 // Various scales. These domains make assumptions of data, naturally.
-var xScale = d3.scaleLog().domain([300, 1e5]).range([0, width]);
-var yScale = d3.scaleLinear().domain([10, 85]).range([height, 0]);
-var radiusScale = d3.scaleSqrt().domain([0, 5e8]).range([0, 40]);
+var xScale = d3.scaleLinear().domain([0, 1e-1]).range([0, width]);
+var yScale = d3.scaleLinear().domain([0, 1e1]).range([height, 0]);
+var radiusScale = d3.scaleSqrt().domain([0, 1e-3]).range([0, 20]);
 var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
 // The x & y axes.
-var xAxis = d3.axisBottom(xScale).ticks(12, d3.format(",d")),
-    yAxis = d3.axisLeft(yScale);
+var xAxis = d3.axisBottom(xScale);
+var yAxis = d3.axisLeft(yScale);
 
 // Create the SVG container and set the origin.
 var svg = d3.select("#chart").append("svg")
-.attr("width", width + margin.left + margin.right)
-.attr("height", height + margin.top + margin.bottom)
-.append("g")
-.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  .attr("width", width + margin.left + margin.right)
+  .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 // Add the x-axis.
 svg.append("g")
-.attr("class", "x axis")
-.attr("transform", "translate(0," + height + ")")
-.call(xAxis);
+  .attr("class", "x axis")
+  .attr("transform", "translate(0," + height + ")")
+  .call(xAxis);
 
 // Add the y-axis.
 svg.append("g")
-.attr("class", "y axis")
-.call(yAxis);
+  .attr("class", "y axis")
+  .call(yAxis);
 
 // Add an x-axis label.
 svg.append("text")
-.attr("class", "x label")
-.attr("text-anchor", "end")
-.attr("x", width)
-.attr("y", height - 6)
-.text("income per capita, inflation-adjusted (dollars)");
+  .attr("class", "x label")
+  .attr("text-anchor", "end")
+  .attr("x", width)
+  .attr("y", height - 6)
+  .text("project appeal");
 
 // Add a y-axis label.
 svg.append("text")
-.attr("class", "y label")
-.attr("text-anchor", "end")
-.attr("y", 6)
-.attr("dy", ".75em")
-.attr("transform", "rotate(-90)")
-.text("life expectancy (years)");
+  .attr("class", "y label")
+  .attr("text-anchor", "end")
+  .attr("y", 6)
+  .attr("dy", ".75em")
+  .attr("transform", "rotate(-90)")
+  .text("distribution of effort");
 
-// Add the year label; the value is set on transition.
+// Add the date label; the value is set on transition.
 var label = svg.append("text")
-.attr("class", "year label")
-.attr("text-anchor", "end")
-.attr("y", height - 24)
-.attr("x", width)
-.text(1800);
+  .attr("class", "date label")
+  .attr("text-anchor", "end")
+  .attr("y", height - 24)
+  .attr("x", width)
+  .text(dateFormat(startDate));
 
 // Load the data.
-d3.json("data/nations.json", function(nations) {
+d3.json("data/project_health.json", function(projects) {
+  // A bisector since data may be sparse.
+  var bisect = d3.bisector(function(d) { return dateParse(d[0]); });
 
-  // A bisector since many nation's data is sparsely-defined.
-  var bisect = d3.bisector(function(d) { return d[0]; });
-
-  // Add a dot per nation. Initialize the data at 1800, and set the colors.
+  // Add a dot per project, initialise data, and set colours.
   var dot = svg.append("g")
     .attr("class", "dots")
     .selectAll(".dot")
-    .data(interpolateData(1800))
+    .data(interpolateData(startDate))
     .enter().append("circle")
     .attr("class", "dot")
     .style("fill", function(d) { return colorScale(color(d)); })
@@ -84,7 +96,7 @@ d3.json("data/nations.json", function(nations) {
   dot.append("title")
     .text(function(d) { return d.name; });
 
-  // Add an overlay for the year label.
+  // Add an overlay for the date label.
   var box = label.node().getBBox();
 
   var overlay = svg.append("rect")
@@ -95,18 +107,17 @@ d3.json("data/nations.json", function(nations) {
     .attr("height", box.height)
     .on("mouseover", enableInteraction);
 
-  // Start a transition that interpolates the data based on year.
+  // Start a transition that interpolates the data based on date.
   svg.transition()
-    .duration(30000)
+    .duration(500000)
     .ease(d3.easeLinear)
-    .tween("year", tweenYear);
-    //.each("end", enableInteraction);
+    .tween("date", tweenDate);
 
   // Positions the dots based on data.
   function position(dot) {
-    dot .attr("cx", function(d) { return xScale(x(d)); })
-      .attr("cy", function(d) { return yScale(y(d)); })
-      .attr("r", function(d) { return radiusScale(radius(d)); });
+    dot.attr("cx", function(d) { return xScale(x(d)); })
+       .attr("cy", function(d) { return yScale(y(d)); })
+       .attr("r", function(d) { return radiusScale(radius(d)); });
   }
 
   // Defines a sort order so that the smallest dots are drawn on top.
@@ -114,11 +125,11 @@ d3.json("data/nations.json", function(nations) {
     return radius(b) - radius(a);
   }
 
-  // After the transition finishes, you can mouseover to change the year.
+  // After the transition finishes, you can mouseover to change the date.
   function enableInteraction() {
-    var yearScale = d3.scaleLinear()
-      .domain([1800, 2009])  // start and end years
-      .range([box.x + 10, box.x + box.width - 10])  // interactive mouseover year scale
+    var dateScale = d3.scaleLinear()
+      .domain([startDate, endDate])
+      .range([box.x + 10, box.x + box.width - 10])  // interactive mouseover date scale
       .clamp(true);
 
     // Cancel the current transition, if any.
@@ -139,43 +150,46 @@ d3.json("data/nations.json", function(nations) {
     }
 
     function mousemove() {
-      displayYear(yearScale.invert(d3.mouse(this)[0]));
+      var date = new Date(dateScale.invert(d3.mouse(this)[0]));
+      displayDate(date);
     }
   }
 
-  // Tweens the entire chart by first tweening the year, and then the data.
+  // Tweens the entire chart by first tweening the date, and then the data.
   // For the interpolated data, the dots and label are redrawn.
-  function tweenYear() {
-    var year = d3.interpolateNumber(1800, 2009);
-    return function(t) { displayYear(year(t)); };
+  function tweenDate() {
+    var date = d3.interpolateDate(startDate, endDate);
+    return function(t) { displayDate(date(t)); };
   }
 
-  // Updates the display to show the specified year.
-  function displayYear(year) {
-    dot.data(interpolateData(year), key).call(position).sort(order);
-    label.text(Math.round(year));
+  // Updates the display to show the specified date.
+  function displayDate(date) {
+    dot.data(interpolateData(date), key).call(position).sort(order);
+    label.text(dateFormat(new Date(date)));
   }
 
-  // Interpolates the dataset for the given (fractional) year.
-  function interpolateData(year) {
-    return nations.map(function(d) {
+  // Interpolates the dataset for the given (fractional) date.
+  function interpolateData(date) {
+    return projects.map(function(d) {
       return {
-        name: d.name,
-        region: d.region,
-        income: interpolateValues(d.income, year),
-        population: interpolateValues(d.population, year),
-        lifeExpectancy: interpolateValues(d.lifeExpectancy, year)
+        name: d.Name,
+        contribution: interpolateValues(d.PublicContribution, date),
+        engagement: interpolateValues(d.SustainedEngagement, date),
+        appeal: interpolateValues(d.ProjectAppeal, date),
+        effort: interpolateValues(d.DistributionOfEffort, date)
       };
     });
   }
 
   // Finds (and possibly interpolates) the value for the specified year.
-  function interpolateValues(values, year) {
-    var i = bisect.left(values, year, 0, values.length - 1),
-    a = values[i];
+  function interpolateValues(values, date) {
+    var i = bisect.left(values, date, 0, values.length - 1);
+    var a = values[i];
     if (i > 0) {
-      var b = values[i - 1],
-        t = (year - a[0]) / (b[0] - a[0]);
+      var b = values[i - 1];
+      var ta = dateParse(a[0]);
+      var tb = dateParse(b[0]);
+      var t = (date - ta) / (tb - ta);
       return a[1] * (1 - t) + b[1] * t;
     }
     return a[1];
