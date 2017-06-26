@@ -1,8 +1,8 @@
 // Various accessors that specify the four dimensions of data to visualize.
 // name, contribution, appeal, engagement, effort
 function x(d) { return d.appeal; }
-function y(d) { return d.effort; }
-function radius(d) { return d.engagement; }
+function y(d) { return d.engagement; }
+function radius(d) { return d.effort; }
 function color(d) { return d.name; }
 function key(d) { return d.name; }
 
@@ -10,7 +10,7 @@ var dateSpecifier = "%Y-%m-%d";
 var dateParse = d3.timeParse(dateSpecifier);
 var dateFormat = d3.timeFormat(dateSpecifier);
 var startDate = dateParse("2014-10-01");
-var endDate = dateParse("2018-01-01");
+var endDate = dateParse("2017-06-01");
 
 // Chart dimensions.
 var margin = {
@@ -24,9 +24,9 @@ var width = 960 - margin.right;
 var height = 500 - margin.top - margin.bottom;
 
 // Various scales. These domains make assumptions of data, naturally.
-var xScale = d3.scaleLinear().domain([0, 1e-1]).range([0, width]);
-var yScale = d3.scaleLinear().domain([0, 1e1]).range([height, 0]);
-var radiusScale = d3.scaleSqrt().domain([0, 1e-3]).range([0, 20]);
+var xScale = d3.scaleLinear().domain([0, 15e-2]).range([0, width]);
+var yScale = d3.scaleLinear().domain([0, 1e-2]).range([height, 0]);
+var radiusScale = d3.scaleSqrt().domain([0, 1e-1]).range([0, 20]);
 var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
 // The x & y axes.
@@ -66,7 +66,7 @@ svg.append("text")
   .attr("y", 6)
   .attr("dy", ".75em")
   .attr("transform", "rotate(-90)")
-  .text("distribution of effort");
+  .text("sustained engagement");
 
 // Add the date label; the value is set on transition.
 var label = svg.append("text")
@@ -109,7 +109,7 @@ d3.json("data/project_health.json", function(projects) {
 
   // Start a transition that interpolates the data based on date.
   svg.transition()
-    .duration(500000)
+    .duration(100000)
     .ease(d3.easeLinear)
     .tween("date", tweenDate);
 
@@ -169,15 +169,31 @@ d3.json("data/project_health.json", function(projects) {
   }
 
   // Interpolates the dataset for the given (fractional) date.
+  var a = 0;
   function interpolateData(date) {
     return projects.map(function(d) {
-      return {
+      var data = {
         name: d.Name,
         contribution: interpolateValues(d.PublicContribution, date),
         engagement: interpolateValues(d.SustainedEngagement, date),
         appeal: interpolateValues(d.ProjectAppeal, date),
         effort: interpolateValues(d.DistributionOfEffort, date)
       };
+
+      console.log(a);
+
+      a += 1;
+      if (a % 11 == 0) {
+        // draw dot trail for each project
+        svg.append("circle")
+          .datum(data)
+          .attr("cx", function(d) { return xScale(x(d)); })
+          .attr("cy", function(d) { return yScale(y(d)); })
+          .attr("r", 3)
+          .attr("fill", function(d) { return colorScale(color(d)); });
+      }
+
+      return data;
     });
   }
 
