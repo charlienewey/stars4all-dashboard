@@ -24,8 +24,8 @@ var width = 960 - margin.right;
 var height = 500 - margin.top - margin.bottom;
 
 // Various scales. These domains make assumptions of data, naturally.
-var xScale = d3.scaleLinear().domain([0, 15e-2]).range([0, width]);
-var yScale = d3.scaleLinear().domain([0, 1e-2]).range([height, 0]);
+var xScale = d3.scaleLinear().domain([0, 5e-2]).range([0, width]);
+var yScale = d3.scaleLinear().domain([0, 5e-2]).range([height, 0]);
 var radiusScale = d3.scaleSqrt().domain([0, 1e-1]).range([0, 20]);
 var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
@@ -77,7 +77,7 @@ var label = svg.append("text")
   .text(dateFormat(startDate));
 
 // Load the data.
-d3.json("data/project_health.json", function(projects) {
+d3.json("../data/project_health.json", function(projects) {
   // A bisector since data may be sparse.
   var bisect = d3.bisector(function(d) { return dateParse(d[0]); });
 
@@ -179,8 +179,6 @@ d3.json("data/project_health.json", function(projects) {
         appeal: interpolateValues(d.ProjectAppeal, date),
         effort: interpolateValues(d.DistributionOfEffort, date)
       };
-
-      console.log(a);
 
       a += 1;
       if (a % 11 == 0) {
