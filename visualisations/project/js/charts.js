@@ -1,8 +1,13 @@
-var svg = dimple.newSvg("#chartContainer", 590, 400);
-
+var data_path = "../data/project_health.json";
 var key = "DistributionOfEffort";
+var chart = null;
 
-d3.json("../data/project_health.json", function (projects) {
+window.onresize = function () {
+  chart.draw(0, true);
+};
+
+var svg = dimple.newSvg("#chartContainer", "100%", "100%");
+d3.json(data_path, function (projects) {
   var chartData = [];
 
   // put data into the correct format...
@@ -19,11 +24,10 @@ d3.json("../data/project_health.json", function (projects) {
     }
   });
 
-  var chart = new dimple.chart(svg, chartData);
-  chart.setBounds(60, 30, 505, 305);
+  chart = new dimple.chart(svg, chartData);
 
-  var x = chart.addTimeAxis("x", "Date", "%Y-%m-%d", "%Y-%m");
-  x.tickFormat = d3.timeFormat("%Y-%m-%d");
+  var x = chart.addTimeAxis("x", "Date", "%Y-%m-%d", "%Y-%m-%d");
+  x.tickFormat = d3.timeFormat("%Y-%m");
   x.timePeriod = d3.timeMonth;
   x.timeInterval = 3;
 
@@ -33,6 +37,6 @@ d3.json("../data/project_health.json", function (projects) {
   var s = chart.addSeries("Project", dimple.plot.line);
   s.interpolation = "monotone";
 
-  chart.addLegend(60, 10, 500, 20, "right");
+  chart.addLegend("10%", "5%", "80%", "20%", "right");
   chart.draw();
 });

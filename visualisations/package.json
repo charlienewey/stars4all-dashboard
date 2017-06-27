@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/charlienewey/stars4all-dashboard#readme",
   "dependencies": {
+    "bootstrap": "^3.3.7",
     "d3": "^4.9.1",
     "dimple": "git+https://github.com/PMSI-AlignAlytics/dimple.git"
   }
