@@ -42,44 +42,87 @@
       </div>
     </nav>
 
-    <div class="container-fluid" class="world-container">
+    <div class="container-fluid">
       <div class="row">
         <!-- start navigation bar -->
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li><a href="/" class="active">Home</a></li>
+            <li><a href="/">Home</a></li>
             <li><a href="/project/all">All Projects</a></li>
-            <li><a href="/project/DarkSkies">DarkSkies</a></li>
+            <li><a href="/project/DarkSkies" class="active">DarkSkies</a></li>
           </ul>
         </div>
         <!-- end navigation bar -->
+      </div>
 
-        <!-- start body content -->
-        <div class="container-fluid">
-          <div class="row" class="placeholder">
-            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-              <!-- chart -->
-              <h4>Project Health Over Time</h4>
+      <!-- start body content -->
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-10 col-md-offset-2 col-sm-9 col-sm-offset-3">
+            <h1>DarkSkies Metrics</h1>
+          </div>
+        </div>
 
-              <div id="healthChart"></div>
+        <div class="row">
+          <div class="col-sm-4 col-sm-offset-3 col-md-4 col-md-offset-2">
+            <h4>Project Appeal</h4>
 
-              <span class="text-muted">
-                Move mouse over the date displayed to view data at a specific time.
-              </span>
-              <!-- end chart -->
+            <div>
+              <div id="projectAppeal" style="height: 300px;"></div>
             </div>
+
+            <span class="text-muted">
+              blurb
+            </span>
+          </div>
+
+          <div class="col-sm-4 col-sm-offset-3 col-md-4 col-md-offset-2">
+            <h4>Public Contribution</h4>
+
+            <div>
+              <div id="publicContribution" style="height: 300px;"></div>
+            </div>
+
+            <span class="text-muted">
+              blurb
+            </span>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-4 col-sm-offset-3 col-md-4 col-md-offset-2">
+            <h4>Distribution of Effort</h4>
+
+            <div>
+              <div id="distributionOfEffort" style="height: 300px;"></div>
+            </div>
+
+            <span class="text-muted">
+              blurb
+            </span>
+          </div>
+
+          <div class="col-sm-4 col-sm-offset-3 col-md-4 col-md-offset-2">
+            <h4>Sustained Engagement</h4>
+
+            <div>
+              <div id="sustainedEngagement" style="height: 300px;"></div>
+            </div>
+
+            <span class="text-muted">
+              blurb
+            </span>
           </div>
         </div>
         <!-- end body content -->
       </div>
     </div>
 
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../node_modules/d3/build/d3.js"></script>
     <script src="../node_modules/dimple/dist/dimple.v2.3.0.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="./js/health.js"></script>
-    <!-- <script src="./js/projectTimeSeries.js"></script> -->
+    <script src="./js/projectTimeSeries.js"></script>
   </body>
 </html>
