@@ -10,13 +10,13 @@ window.onload = function () {
 }
 
 function drawChart(container, projectName, feature) {
-  let svg = dimple.newSvg(container, "80%", "100%");
+  var svg = dimple.newSvg(container, "80%", "100%");
   d3.json(data_path, function (projects) {
-    let chartData = [];
+    var chartData = [];
 
     // put data into the correct format...
     projects.map(function (d) {
-      for (let i = 0; i < d.ProjectAppeal.length; i += 1) {
+      for (var i = 0; i < d.ProjectAppeal.length; i += 1) {
         chartData.push({
           "Project": d.Name,
           "Date": d.ProjectAppeal[i][0],
@@ -35,15 +35,15 @@ function drawChart(container, projectName, feature) {
     chart = new dimple.chart(svg, chartData);
     chart.setMargins("50px", "50px", 0, "50px");
 
-    let x = chart.addTimeAxis("x", "Date", "%Y-%m-%d", "%Y-%m-%d");
+    var x = chart.addTimeAxis("x", "Date", "%Y-%m-%d", "%Y-%m-%d");
     x.tickFormat = d3.timeFormat("%Y-%m");
     x.timePeriod = d3.timeMonth;
     x.timeInterval = 3;
 
-    let y = chart.addMeasureAxis("y", feature, Math.E);
+    var y = chart.addMeasureAxis("y", feature, Math.E);
     y.useLog = true;
 
-    let s = chart.addSeries("Project", dimple.plot.line);
+    var s = chart.addSeries("Project", dimple.plot.line);
     s.interpolation = "monotone";
 
     chart.addLegend("10%", "5%", "80%", "20%", "right");

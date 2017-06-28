@@ -4,6 +4,7 @@
   "description": "A simple package for visualising citizen science project health metrics.",
   "main": "index.js",
   "scripts": {
+    "build": "webpack --optimize-minimize",
     "start": "python -m SimpleHTTPServer",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,5 +22,8 @@
     "bootstrap": "^3.3.7",
     "d3": "^4.9.1",
     "dimple": "git+https://github.com/PMSI-AlignAlytics/dimple.git"
+  },
+  "devDependencies": {
+    "webpack": "^3.0.0"
   }
 }
