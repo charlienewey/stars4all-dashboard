@@ -1,3 +1,5 @@
+import * as d3 from 'd3';
+
 // Various accessors that specify the four dimensions of data to visualize.
 // name, contribution, appeal, engagement, effort
 function x(d) { return d.appeal; }

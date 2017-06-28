@@ -1,3 +1,6 @@
+import * as dimple from 'dimple';
+import * as d3 from 'd3';
+
 var project_name = "DarkSkies";
 var data_path = "../data/project_health.json";
 
@@ -32,7 +35,7 @@ function drawChart(container, projectName, feature) {
     chartData = dimple.filterData(chartData, "Project", projectName);
 
     // draw chart, set up axes, etc
-    chart = new dimple.chart(svg, chartData);
+    var chart = new dimple.chart(svg, chartData);
     chart.setMargins("50px", "50px", 0, "50px");
 
     var x = chart.addTimeAxis("x", "Date", "%Y-%m-%d", "%Y-%m-%d");
