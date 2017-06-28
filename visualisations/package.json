@@ -1,7 +1,7 @@
 {
   "name": "stars4all-visualisation",
   "version": "1.0.0",
-  "description": "",
+  "description": "A simple package for visualising citizen science project health metrics.",
   "main": "index.js",
   "scripts": {
     "start": "python -m SimpleHTTPServer",
