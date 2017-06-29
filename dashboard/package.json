@@ -5,8 +5,16 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --optimize-minimize",
-    "start": "python -m SimpleHTTPServer",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "config": {
+    "port": 8080,
+    "paths": {
+      "modules": "node_modules",
+      "static": "static",
+      "templates": "templates"
+    }
   },
   "repository": {
     "type": "git",
@@ -21,7 +29,9 @@
   "dependencies": {
     "bootstrap": "^3.3.7",
     "d3": "^4.9.1",
-    "dimple": "git+https://github.com/PMSI-AlignAlytics/dimple.git"
+    "dimple": "git+https://github.com/PMSI-AlignAlytics/dimple.git",
+    "express": "^4.15.3",
+    "nunjucks": "^3.0.1"
   },
   "devDependencies": {
     "webpack": "^3.0.0"

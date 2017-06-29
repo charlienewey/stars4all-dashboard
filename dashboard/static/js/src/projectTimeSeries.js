@@ -2,7 +2,7 @@ import * as dimple from 'dimple';
 import * as d3 from 'd3';
 
 var project_name = "DarkSkies";
-var data_path = "../data/project_health.json";
+var data_path = "/static/data/project_health.json";
 
 window.onload = function () {
   // create all four charts

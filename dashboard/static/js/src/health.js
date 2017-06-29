@@ -79,7 +79,7 @@ var label = svg.append("text")
   .text(dateFormat(startDate));
 
 // Load the data.
-d3.json("../data/project_health.json", function(projects) {
+d3.json("/static/data/project_health.json", function(projects) {
   // A bisector since data may be sparse.
   var bisect = d3.bisector(function(d) { return dateParse(d[0]); });
 
