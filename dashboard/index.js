@@ -2,6 +2,8 @@
  * Panoptes Researcher Dashboard run script
  * Run by invoking 'npm start'
  */
+require('use-strict');
+
 var express = require('express');
 var app = express();
 var httpServer = require('http').Server(app);
