@@ -19,7 +19,7 @@
             </div>
 
             <span class="text-muted">
-              blurb
+              Total number of volunteers divided by the the active period of the project squared. The relative number of volunteers engaged.
             </span>
           </div>
 
@@ -31,7 +31,7 @@
             </div>
 
             <span class="text-muted">
-              blurb
+              Median number of classifications per volunteer, divided by active period of the project squared. The average amount of work produced by a volunteer.
             </span>
           </div>
         </div>
@@ -45,7 +45,7 @@
             </div>
 
             <span class="text-muted">
-              blurb
+              Median interval (weeks) between a user’s first and last classification, divided by the active period of the project squared. An indicator of how long volunteers stay engaged.
             </span>
           </div>
 
@@ -57,12 +57,13 @@
             </div>
 
             <span class="text-muted">
-              blurb
+              A measure of equality in how classifications are distributed across all volunteers, to indicate whether work is completed by a small number of highly engaged users, or spread more equally.
             </span>
           </div>
         </div>
 {% endblock %}
 
 {% block foot %}
+    <script>var project_name = '{{ slug }}';</script>
     <script src="/static/js/dist/timeseries.bundle.js"></script>
 {% endblock %}

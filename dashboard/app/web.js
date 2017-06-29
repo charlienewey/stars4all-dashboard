@@ -24,24 +24,50 @@ function start(app, paths) {
     });
   });
 
-  app.get('/project', function (req, res) {
+  app.get('/project/all', function (req, res) {
+    let proj = 'All Projects';
     res.render('project.njk', {
-      title: 'Individual Project Metrics'
+      project: proj,
+      slug: 'all',
+      title: 'Project Metrics for ' + proj
     });
   });
 
-  /*
-  app.get('/trending', function (req, res) {
-    res.send('Page does not exist yet :-(');
-  });
-
-  app.get('/images', function (req, res) {
-    res.render('top-images.njk', {
-      page: 'images',
-      title: 'Popular Images'
+  app.get('/project/darkskies', function (req, res) {
+    let proj = 'DarkSkies';
+    res.render('project.njk', {
+      project: proj,
+      slug: proj,
+      title: 'Project Metrics for ' + proj
     });
   });
-  */
+
+  app.get('/project/lostatnight', function (req, res) {
+    let proj = 'LostAtNight';
+    res.render('project.njk', {
+      project: proj,
+      slug: proj,
+      title: 'Project Metrics for ' + proj
+    });
+  });
+
+  app.get('/project/nightcities', function (req, res) {
+    let proj = 'NightCities';
+    res.render('project.njk', {
+      project: proj,
+      slug: proj,
+      title: 'Project Metrics for ' + proj
+    });
+  });
+
+  app.get('/project/nightknights', function (req, res) {
+    let proj = 'NightKnights';
+    res.render('project.njk', {
+      project: proj,
+      slug: proj,
+      title: 'Project Metrics for ' + proj
+    });
+  });
 };
 
 module.exports.start = start;

@@ -1,9 +1,7 @@
 import * as dimple from 'dimple';
 import * as d3 from 'd3';
 
-var project_name = "DarkSkies";
 var data_path = "/static/data/project_health.json";
-
 window.onload = function () {
   // create all four charts
   drawChart("#projectAppeal", project_name, "ProjectAppeal");
@@ -32,7 +30,9 @@ function drawChart(container, projectName, feature) {
     });
 
     // filter the data to only include the relevant project
-    chartData = dimple.filterData(chartData, "Project", projectName);
+    if (project_name !== 'all') {
+      chartData = dimple.filterData(chartData, "Project", projectName);
+    }
 
     // draw chart, set up axes, etc
     var chart = new dimple.chart(svg, chartData);
