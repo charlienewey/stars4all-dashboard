@@ -29,8 +29,8 @@ def public_contribution(series, project_start_date):
     return median_cpu / (active_weeks ** 2)
 
 def sustained_engagement(series, fst, project_start_date,
-                         time_field="task_run__finish_time",
-                         user_field="task_run__user_id"):
+                         time_field="finish_time",
+                         user_field="user_id"):
 
     # Put DataFrames together
     first = fst.reset_index()

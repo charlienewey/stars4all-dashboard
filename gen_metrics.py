@@ -17,4 +17,4 @@ if __name__ == "__main__":
     dataset = zoometrics.Dataset(path=args.path)
     metrics = dataset.get_metrics(frequency=args.frequency)
 
-    metrics.to_csv(args.dest)
+    metrics.dropna(how="any").to_csv(args.dest)

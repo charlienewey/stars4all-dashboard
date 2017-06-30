@@ -5,8 +5,8 @@ from zoometrics.contribution import *
 from zoometrics.engagement import *
 
 class Dataset(object):
-    def __init__(self, path, index="task_run__finish_time"):
-        self.df = pd.read_csv(path)
+    def __init__(self, path, index="finish_time"):
+        self.df = pd.read_csv(path, error_bad_lines=False, warn_bad_lines=True)
         self.df[index] = pd.to_datetime(self.df[index])
         self.df = self.df.set_index(index)
         self.index = index
@@ -39,12 +39,12 @@ class Dataset(object):
         periods = self.df.groupby(by=pd.TimeGrouper(time_group, closed="left"))
 
         # Calculate first contribution for each user
-        user_field = "task_run__user_id"
+        user_field = "user_id"
         fst = self.df.reset_index().groupby(user_field).first()[self.index]
 
         # Return new DataFrame with columns
         pipeline = {
-            "task_run__user_id": {
+            "user_id": {
                 "ProjectAppeal": lambda x: project_appeal(x, project_start_date),
                 "PublicContribution": lambda x: public_contribution(x, project_start_date),
                 "DistributionOfEffort": distribution_of_effort,
