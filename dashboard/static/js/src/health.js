@@ -2,8 +2,8 @@ import * as d3 from 'd3';
 
 // Various accessors that specify the four dimensions of data to visualize.
 // name, contribution, appeal, engagement, effort
-function x(d) { return d.appeal; }
-function y(d) { return d.engagement; }
+function x(d) { return d.publicEngagement; }
+function y(d) { return d.contributionToScience; }
 function radius(d) { return d.effort; }
 function color(d) { return d.name; }
 function key(d) { return d.name; }
@@ -26,8 +26,8 @@ var width = 960 - margin.right;
 var height = 500 - margin.top - margin.bottom;
 
 // Various scales. These domains make assumptions of data, naturally.
-var xScale = d3.scaleLinear().domain([0, 5e-2]).range([0, width]);
-var yScale = d3.scaleLinear().domain([0, 5e-2]).range([height, 0]);
+var xScale = d3.scaleLinear().domain([0, 5e-1]).range([0, width]);
+var yScale = d3.scaleLinear().domain([0, 1]).range([height, 0]);
 var radiusScale = d3.scaleSqrt().domain([0, 1e-1]).range([0, 20]);
 var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
@@ -59,7 +59,7 @@ svg.append("text")
   .attr("text-anchor", "end")
   .attr("x", width)
   .attr("y", height - 6)
-  .text("project appeal");
+  .text("contribution to science");
 
 // Add a y-axis label.
 svg.append("text")
@@ -68,7 +68,7 @@ svg.append("text")
   .attr("y", 6)
   .attr("dy", ".75em")
   .attr("transform", "rotate(-90)")
-  .text("sustained engagement");
+  .text("public engagement");
 
 // Add the date label; the value is set on transition.
 var label = svg.append("text")
@@ -175,11 +175,12 @@ d3.json("/static/data/project_health.json", function(projects) {
   function interpolateData(date) {
     return projects.map(function(d) {
       var data = {
-        name: d.Name,
-        contribution: interpolateValues(d.PublicContribution, date),
-        engagement: interpolateValues(d.SustainedEngagement, date),
-        appeal: interpolateValues(d.ProjectAppeal, date),
-        effort: interpolateValues(d.DistributionOfEffort, date)
+        "name": d.Name,
+        "effort": interpolateValues(d.DistributionOfEffort, date),
+        "publicEngagement": interpolateValues(d.PublicContribution, date) +
+                            interpolateValues(d.SustainedEngagement, date) +
+                            interpolateValues(d.ProjectAppeal, date),
+        "contributionToScience": interpolateValues(d.DistributionOfEffort, date)
       };
 
       a += 1;
