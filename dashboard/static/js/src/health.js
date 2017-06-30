@@ -70,6 +70,10 @@ svg.append("text")
   .attr("transform", "rotate(-90)")
   .text("public engagement");
 
+// Add the dot trail
+var trail = svg.append("g")
+  .attr("class", "dot-trail");
+
 // Add the date label; the value is set on transition.
 var label = svg.append("text")
   .attr("class", "date label")
@@ -96,7 +100,17 @@ d3.json("/static/data/project_health.json", function(projects) {
 
   // Add a title.
   dot.append("title")
-    .text(function(d) { return d.name; });
+    .text(function(d) { return key(d); });
+
+  // Add labels to each of the dots
+  var dotLabel = svg.append("g")
+    .attr("class", "dotLabels")
+    .selectAll(".dotLabel")
+    .data(interpolateData(startDate))
+    .enter()
+    .append("text")
+    .text(function (d) { return key(d)})
+    .call(textPosition);
 
   // Add an overlay for the date label.
   var box = label.node().getBBox();
@@ -117,9 +131,15 @@ d3.json("/static/data/project_health.json", function(projects) {
 
   // Positions the dots based on data.
   function position(dot) {
-    dot.attr("cx", function(d) { return xScale(x(d)); })
-       .attr("cy", function(d) { return yScale(y(d)); })
-       .attr("r", function(d) { return radiusScale(radius(d)); });
+    dot.attr("cx", function (d) { return xScale(x(d)); })
+       .attr("cy", function (d) { return yScale(y(d)); })
+       .attr("r",  function (d) { return radiusScale(radius(d)); });
+  }
+
+  // Positions the dot labels based on data
+  function textPosition(lbl) {
+    lbl.attr("x", function (d) { return xScale(x(d)) - (1/2 * this.getComputedTextLength()); })
+       .attr("y", function (d) { return yScale(y(d)) - radiusScale(radius(d)) - 10; });
   }
 
   // Defines a sort order so that the smallest dots are drawn on top.
@@ -167,6 +187,7 @@ d3.json("/static/data/project_health.json", function(projects) {
   // Updates the display to show the specified date.
   function displayDate(date) {
     dot.data(interpolateData(date), key).call(position).sort(order);
+    dotLabel.data(interpolateData(date), key).call(textPosition);
     label.text(dateFormat(new Date(date)));
   }
 
@@ -186,7 +207,7 @@ d3.json("/static/data/project_health.json", function(projects) {
       a += 1;
       if (a % 11 == 0) {
         // draw dot trail for each project
-        svg.append("circle")
+        trail.append("circle")
           .datum(data)
           .attr("cx", function(d) { return xScale(x(d)); })
           .attr("cy", function(d) { return yScale(y(d)); })
