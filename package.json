@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "webpack --optimize-minimize",
-    "heroku-prebuild": "webpack --optimize-minimize",
+    "heroku-postbuild": "webpack --optimize-minimize",
     "start": "node index.js"
   },
   "config": {
