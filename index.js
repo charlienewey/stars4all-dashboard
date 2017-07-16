@@ -11,7 +11,7 @@ var env = process.env;
 
 // Fetch configuration variables from package.json, or use sensible defaults
 let makePath = (p) => __dirname + '/' + p;
-let httpPort = env.npm_package_config_port || 8080;
+let httpPort = env.PORT || env.npm_package_config_port || 8080;
 let paths = {
   'modules': makePath(env.npm_package_config_paths_modules || 'node_modules'),
   'static': makePath(env.npm_package_config_paths_static || 'static'),
